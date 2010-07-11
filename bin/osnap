@@ -1,0 +1,123 @@
+#!/bin/sh
+# Distributed under the terms of the MIT License.
+# Copyright (c) 2010 Greg Fitzgerald <netzdamon@gmail.com>
+# vim: set sw=4 sts=4 et tw=80 :
+
+CONF_FILE=${CONF_FILE:="/etc/osnap.conf"}
+
+if [[ -e $CONF_FILE ]]; then
+    source $CONF_FILE
+fi
+
+ARCH=${ARCH:=`machine -a`}
+KERNEL=${KERNEL:=GENERIC}
+CVSROOT=${CVSROOT:="anoncvs@anoncvs1.usa.openbsd.org:/cvs"}
+BRANCH=${BRANCH:=`uname -r`}
+MIRROR=${MIRROR:="http://mirror.rit.edu/pub/OpenBSD/"}
+BSDVER=${BSDVER:=`uname -r`}
+
+ACTION="${1}"
+ACTION_CMD="${2}"
+ARGS="${1}:${2}"
+
+error() {
+    echo "* $@"
+}
+
+die() {
+    msg="${1}"
+    if [[ -z "${msg}" ]]; then
+        msg = "Some asshole forget to set a message for die, but something bad happened. Take cover!"
+    fi
+    error "${msg}"
+    exit 1
+}
+
+osnap_usage() {
+    cat "${osnap_path:-$HOME/work/projects/active/osnap}/README" | ${PAGER:-less}
+}
+
+osnap_parse_args() {
+    case "$ARGS" in
+    build:kernel)
+        build_kernel
+    ;;
+    build:world)
+        build_world
+    ;;
+    build:all)
+        build_kernel
+        build_world
+    ;;
+    sync:world)
+        echo "Sync World"
+    ;;
+    sync:ports)
+        echo "Sync Ports"
+    ;;
+    sync:all)
+        echo "Sync All"
+    ;;
+    install:world)
+        build_world
+    ;;
+    install:kernel)
+        install_kernel
+    ;;
+    *)
+        osnap_usage
+        exit 1
+    ;;
+  esac
+}
+
+setup() {
+    if ! [[ -d /usr/src ]]; then
+        mkdir -p /usr/src
+    fi
+
+    if ! [[ -d /usr/obj ]]; then
+        mkdir -p /usr/obj
+    fi
+
+    # Clean obj directory
+    rm -rf /usr/obj/*
+}
+
+build_kernel() {
+    # Rebuild Kernel
+    if [[ -d /usr/src/sys/arch/${ARCH}/conf ]]; then
+        cd /usr/src/sys/arch/${ARCH}/conf
+        /usr/sbin/config ${KERNEL}
+        cd /usr/src/sys/arch/${ARCH}/compile/${KERNEL}
+        make clean && make depend && make
+    else
+        echo "Seems /usr/src/sys/arch/${ARCH}/conf does not exist."
+        echo "You may need to check out the source tree"
+        exit 1
+    fi
+}
+
+install_kernel() {
+    # Install Kernel
+    cd /usr/src/sys/arch/${ARCH}/compile/${KERNEL}
+    make install
+    reboot
+}
+
+install_world() {
+    # Rebuild Binaries
+    cd /usr/src
+
+    if [[ -d ${PWD}/CVS ]]; then
+        make obj
+        cd /usr/src/etc && env DESTDIR=/ make distrib-dirs
+        cd /usr/src
+        make build
+    else
+        echo "Seems /usr/src is not properly checked out."
+        exit 1
+    fi
+}
+
+osnap_parse_args
