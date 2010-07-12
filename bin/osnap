@@ -19,6 +19,7 @@ MIRROR=${MIRROR:="http://mirror.rit.edu/pub/OpenBSD/"}
 ACTION="${1}"
 ACTION_CMD="${2}"
 ARGS="${1}:${2}"
+VERSION=`cat version`
 
 error() {
     echo "* $@"
@@ -59,6 +60,10 @@ Author
 EOF
 }
 
+osnap_version() {
+    echo "Oh Snap! Version: ${VERSION}"
+}
+
 osnap_parse_args() {
     case "$ARGS" in
     build:kernel)
@@ -86,11 +91,41 @@ osnap_parse_args() {
     install:kernel)
         install_kernel
     ;;
+    version:)
+        osnap_version
+        exit 0
+    ;;
     *)
         osnap_usage
         exit 1
     ;;
   esac
+}
+
+yesorno() {
+    msg="${1}"
+    yes="${2}"
+    no="${3}"
+
+    input=0
+
+    while [[ $input -lt 1 ]]; do
+        echo -n "${msg} (Y|N) "
+        read yesno
+        case $yesno in
+        y|yes|Y|YES)
+            $2
+            input=1
+        ;;
+        n|no|N|NO)
+            $3
+            input=1
+        ;;
+        *)
+            input=0
+        ;;
+        esac
+    done
 }
 
 setup() {
@@ -122,9 +157,9 @@ build_kernel() {
 
 install_kernel() {
     # Install Kernel
-    cd /usr/src/sys/arch/${ARCH}/compile/${KERNEL}
-    make install
-    reboot
+    #cd /usr/src/sys/arch/${ARCH}/compile/${KERNEL}
+    #make install
+    yesorno "Reboot to install kernel?" "reboot"
 }
 
 install_world() {
