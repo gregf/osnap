@@ -1,0 +1,23 @@
+OSnap
+========
+
+**Homepage**:   [http://gregf.github.com/osnap] (http://gregf.github.com/osnap)  
+**Git**:        [http://github.com/gregf/osnap] (http://github.com/gregf/osnap)  
+**Author**:     Greg Fitzgerald  
+**Copyright**:  2010   
+**License**:    MIT License  
+
+Index
+-----
+
+* [About](http://gregf.github.com/osnap/#about)
+* [Dependencies](http://gregf.github.com/osnap/#dependencies)
+* [Download](http://gregf.github.com/osnap/#download)
+* [Install](http://gregf.github.com/osnap/#install)
+* [Support](http://gregf.github.com/osnap/#support)
+* [Authors](http://gregf.github.com/osnap/#authors)
+* [License](http://gregf.github.com/osnap/#license)
+
+About
+----
+> OSnap is a simple shell script that takes care of keeping your OpenBSD installations up to date.
