@@ -1,0 +1,8 @@
+ToDo
+====
+
+* Fetch dist tarballs from mirror to populate src and ports.
+  This will make the initial cvs checkout a lot faster.
+* Compression option
+* Ability to follow current, can only checkout official versioned branches currently.
+* Make sure we are root when we need it
