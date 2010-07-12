@@ -9,12 +9,12 @@ if [[ -e $CONF_FILE ]]; then
     source $CONF_FILE
 fi
 
-ARCH=${ARCH:=`machine -a`}
+#ARCH=${ARCH:=`machine -a`}
 KERNEL=${KERNEL:=GENERIC}
 CVSROOT=${CVSROOT:="anoncvs@anoncvs1.usa.openbsd.org:/cvs"}
-BRANCH=${BRANCH:=`uname -r`}
-MIRROR=${MIRROR:="http://mirror.rit.edu/pub/OpenBSD/"}
 BSDVER=${BSDVER:=`uname -r`}
+BRANCH=${BRANCH:=`echo openbsd_$BSDVER | tr "[:lower:]" "[:upper:]" | tr "." "_"`}
+MIRROR=${MIRROR:="http://mirror.rit.edu/pub/OpenBSD/"}
 
 ACTION="${1}"
 ACTION_CMD="${2}"
@@ -34,7 +34,29 @@ die() {
 }
 
 osnap_usage() {
-    cat "${osnap_path:-$HOME/work/projects/active/osnap}/README" | ${PAGER:-less}
+    cat << EOF
+Usage
+
+  osnap [Options] Action [Implementation]
+
+Action
+
+    usage       - Show this usage screen
+    version     - Print Version Number
+    build       - Defaults to all
+        kernel  - Build Kernel Sources
+        world   - Build World Sources
+        all     - Build both Kernel and World
+    install     -
+        kernel  - Installs The Kernel
+    sync        - Defaults to All
+        ports   - Syncs Ports Tree
+        world   - Syncs World Sources
+        all     - Syncs Both Ports and World
+
+Author
+    Greg Fitzgerald <netzdamon@gmail.com>
+EOF
 }
 
 osnap_parse_args() {
@@ -78,10 +100,10 @@ setup() {
 
     if ! [[ -d /usr/obj ]]; then
         mkdir -p /usr/obj
+    else
+        rm -rf /usr/obj/*
     fi
 
-    # Clean obj directory
-    rm -rf /usr/obj/*
 }
 
 build_kernel() {
