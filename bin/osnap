@@ -1,7 +1,9 @@
-#!/bin/sh
+#!/bin/sh -e
 # Distributed under the terms of the MIT License.
 # Copyright (c) 2010 Greg Fitzgerald <netzdamon@gmail.com>
 # vim: set sw=4 sts=4 et tw=80 :
+
+PATH="/bin:/sbin:/usr/bin:/usr/sbin"
 
 CONF_FILE=${CONF_FILE:="/etc/osnap.conf"}
 
@@ -9,7 +11,7 @@ if [[ -e $CONF_FILE ]]; then
     source $CONF_FILE
 fi
 
-#ARCH=${ARCH:=`machine -a`}
+ARCH=${ARCH:=`machine -a`}
 KERNEL=${KERNEL:=GENERIC}
 CVSROOT=${CVSROOT:="anoncvs@anoncvs1.usa.openbsd.org:/cvs"}
 BSDVER=${BSDVER:=`uname -r`}
@@ -161,7 +163,7 @@ install_kernel() {
 }
 
 install_world() {
-    cd /usr/src
+    cd /usr/src || die "Could not chdir to /usr/src"
 
     if [[ -d ${PWD}/CVS ]]; then
         make obj
