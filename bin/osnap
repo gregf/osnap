@@ -142,7 +142,6 @@ setup() {
 }
 
 build_kernel() {
-    # Rebuild Kernel
     if [[ -d /usr/src/sys/arch/${ARCH}/conf ]]; then
         cd /usr/src/sys/arch/${ARCH}/conf
         /usr/sbin/config ${KERNEL}
@@ -156,14 +155,12 @@ build_kernel() {
 }
 
 install_kernel() {
-    # Install Kernel
-    #cd /usr/src/sys/arch/${ARCH}/compile/${KERNEL}
-    #make install
+    cd /usr/src/sys/arch/${ARCH}/compile/${KERNEL}
+    make install
     yesorno "Reboot to install kernel?" "reboot"
 }
 
 install_world() {
-    # Rebuild Binaries
     cd /usr/src
 
     if [[ -d ${PWD}/CVS ]]; then
