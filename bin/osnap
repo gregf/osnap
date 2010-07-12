@@ -24,6 +24,10 @@ ARGS="${1}:${2}"
 VERSION=`cat version`
 
 error() {
+    echo "!! $@"
+}
+
+notice() {
     echo "* $@"
 }
 
@@ -79,13 +83,14 @@ osnap_parse_args() {
         build_world
     ;;
     sync:world)
-        echo "Sync World"
+        sync_world
     ;;
     sync:ports)
-        echo "Sync Ports"
+        sync_ports
     ;;
     sync:all)
-        echo "Sync All"
+        sync_world
+        sync_ports
     ;;
     install:world)
         build_world
@@ -174,6 +179,16 @@ install_world() {
         echo "Seems /usr/src is not properly checked out."
         exit 1
     fi
+}
+
+sync_world() {
+    cd /usr || die "Could chdir to /usr"
+    cvs -qd anoncvs@anoncvs.ca.openbsd.org:/cvs get -r${BRANCH} -P src
+}
+
+sync_ports() {
+    cd /usr || die "Could not chdir to /usr"
+    cvs -qd anoncvs@anoncvs.ca.openbsd.org:/cvs get -r${BRANCH} -P ports
 }
 
 osnap_parse_args
