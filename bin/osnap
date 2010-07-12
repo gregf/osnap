@@ -73,9 +73,11 @@ osnap_version() {
 osnap_parse_args() {
     case "$ARGS" in
     build:kernel)
+        notice "Building Kernel"
         build_kernel
     ;;
     build:world)
+        notice "Building World"
         build_world
     ;;
     build:all)
@@ -83,9 +85,11 @@ osnap_parse_args() {
         build_world
     ;;
     sync:world)
+        notice "Syncing World"
         sync_world
     ;;
     sync:ports)
+        notice "Syncing Ports"
         sync_ports
     ;;
     sync:all)
@@ -93,9 +97,12 @@ osnap_parse_args() {
         sync_ports
     ;;
     install:world)
-        build_world
+        error "OpenBSD installs world during the build phase"
+        error "Run ${0} build world"
+        exit 1
     ;;
     install:kernel)
+        notice "Installing Kernel"
         install_kernel
     ;;
     version:)
