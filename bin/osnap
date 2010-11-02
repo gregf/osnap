@@ -13,7 +13,7 @@ fi
 
 ARCH=${ARCH:=`machine -a`}
 KERNEL=${KERNEL:=GENERIC}
-CVSROOT=${CVSROOT:="anoncvs@anoncvs1.usa.openbsd.org:/cvs"}
+CVSROOT=${CVSROOT:="anoncvs@openbsd.mirror.frontiernet.net:/cvs"}
 BSDVER=${BSDVER:=`uname -r`}
 BRANCH=${BRANCH:=`echo openbsd_$BSDVER | tr "[:lower:]" "[:upper:]" | tr "." "_"`}
 MIRROR=${MIRROR:="http://mirror.rit.edu/pub/OpenBSD/"}
@@ -168,6 +168,10 @@ build_kernel() {
     fi
 }
 
+build_world() {
+    install_world
+}
+
 install_kernel() {
     cd /usr/src/sys/arch/${ARCH}/compile/${KERNEL}
     make install
@@ -190,12 +194,12 @@ install_world() {
 
 sync_world() {
     cd /usr || die "Could chdir to /usr"
-    cvs -qd anoncvs@anoncvs.ca.openbsd.org:/cvs get -r${BRANCH} -P src
+    cvs -qd ${CVSROOT} get -r${BRANCH} -P src
 }
 
 sync_ports() {
     cd /usr || die "Could not chdir to /usr"
-    cvs -qd anoncvs@anoncvs.ca.openbsd.org:/cvs get -r${BRANCH} -P ports
+    cvs -qd ${CVSROOT} get -r${BRANCH} -P ports
 }
 
 osnap_parse_args
