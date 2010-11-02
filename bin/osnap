@@ -8,7 +8,7 @@ PATH="/bin:/sbin:/usr/bin:/usr/sbin"
 CONF_FILE=${CONF_FILE:="/etc/osnap.conf"}
 
 if [[ -e $CONF_FILE ]]; then
-    source $CONF_FILE
+    . $CONF_FILE
 fi
 
 ARCH=${ARCH:=`machine -a`}
